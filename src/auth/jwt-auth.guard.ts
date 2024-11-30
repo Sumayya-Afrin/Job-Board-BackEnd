@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
+
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -21,8 +23,8 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       // Verify and decode the JWT
-      const decoded = this.jwtService.verify(token);
-      request.user = decoded; // Attach the decoded user info to the request
+      const user = this.jwtService.verify(token);
+      request.user = user; // Attach the decoded user info to the request
       return true;
     } catch (error) {
       return false; // Invalid token, reject the request

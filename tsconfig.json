@@ -17,5 +17,9 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": [
+    "src/**/*.ts",   // Ensure all source files are included, including the custom type definitions
+    "src/express.d.ts" // Make sure your custom type definition is included here
+  ]
 }

@@ -58,20 +58,20 @@ export class JobsService {
     return { message: 'Job deleted successfully' };
   }
   // Apply for a job
-  async applyForJob(id: string, applicationData: any) {
-    const job = await this.jobModel.findById(id);
-    if (!job) {
-      throw new NotFoundException('Job not found');
-    }
-
-    const application = new this.applicationModel({
-      jobId: job._id,
-      userId: applicationData.userId,
-      coverLetter: applicationData.coverLetter,
-      status: 'applied',
-    });
-
-    await application.save();
-    return application;
-  }
+    // Check if user has already applied for the job
+    async findApplicationByJobAndUser(jobId: string, userId: string): Promise<Application | null> {
+        return this.applicationModel.findOne({ jobId, userId });
+      }
+    
+      // Apply for a job
+      async applyForJob(userId: string, jobId: string, coverLetter: string): Promise<Application> {
+        const application = new this.applicationModel({
+          jobId,
+          userId,
+          coverLetter,
+          status: 'applied',
+        });
+    
+        return application.save();
+      }
 }
