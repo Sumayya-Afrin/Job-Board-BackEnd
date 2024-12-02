@@ -53,7 +53,7 @@ export class AuthService {
 
   // Method for generating JWT token
   private generateToken(user: UserDocument) {
-    const payload = { email: user.email, sub: user._id, role: user.role };
+    const payload = { email: user.email, sub: user._id.toString(), role: user.role };
     return {
       access_token: this.jwtService.sign(payload, {
         secret:'job-board-12345', // Use your actual secret here

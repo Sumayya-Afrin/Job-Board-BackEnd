@@ -66,6 +66,9 @@ export class JobsService {
       // Apply for a job
       async applyForJob(userId: string, jobId: string, coverLetter: string): Promise<Application> {
         const application = new this.applicationModel({
+
+        
+        
           jobId,
           userId,
           coverLetter,

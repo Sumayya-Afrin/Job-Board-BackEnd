@@ -23,8 +23,11 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       // Verify and decode the JWT
-      const user = this.jwtService.verify(token);
+      const user = this.jwtService.verify(token , { secret: 'job-board-12345' });
       request.user = user; // Attach the decoded user info to the request
+      console.log('Decoded user:', request.user);
+     // console.log('User ID:', userId);
+
       return true;
     } catch (error) {
       return false; // Invalid token, reject the request
