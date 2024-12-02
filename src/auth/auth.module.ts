@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 // import { MongooseModule } from '@nestjs/mongoose';
@@ -9,15 +9,17 @@ import { UsersModule } from '../users/users.module';  // Import UsersModule
 import { JwtStrategy } from './jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthController } from './auth.controller'; 
 
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',  // Replace with your actual secret
+      secret: process.env.JWT_SECRET ,  // Replace with your actual secret
       signOptions: { expiresIn: '60s' },  // Token expiry time
     }),
-    UsersModule, // If you need the users module for finding users, etc.
+    forwardRef(() => UsersModule), // If you need the users module for finding users, etc.
   ],
+  controllers: [AuthController], 
   providers: [AuthService, JwtStrategy , JwtService, JwtAuthGuard],
    // Export JwtService so it can be used in other modules
    exports: [JwtService, JwtAuthGuard],

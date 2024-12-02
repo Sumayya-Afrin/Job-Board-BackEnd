@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -14,6 +14,12 @@ export class AuthService {
   ) {}
 
   async register(name: string, email: string, password: string, role: string) {
+
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      throw new UnauthorizedException('Email already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new this.userModel({
       name,
@@ -21,22 +27,38 @@ export class AuthService {
       password: hashedPassword,
       role,
     });
-    await user.save();
-    return this.generateToken(user);
+   
+    try {
+      await user.save();
+      return this.generateToken(user); // Return the JWT after saving the user
+    } catch (error) {
+      throw new InternalServerErrorException('Error saving user');
+    }
   }
 
+ 
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({ email });
-    if (!user) throw new Error('Invalid credentials');
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials'); // Proper error handling
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new Error('Invalid credentials');
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid credentials'); // Proper error handling
+    }
+
     return this.generateToken(user);
   }
 
+  // Method for generating JWT token
   private generateToken(user: UserDocument) {
     const payload = { email: user.email, sub: user._id, role: user.role };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {
+        secret:'job-board-12345', // Use your actual secret here
+        expiresIn: '60m', // Optional: Token expiration time
+      }),
     };
   }
 }

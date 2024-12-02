@@ -1,4 +1,7 @@
 /* eslint-disable prettier/prettier */
+import * as dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
