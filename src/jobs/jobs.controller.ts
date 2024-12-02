@@ -14,13 +14,10 @@ import {
 import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Assuming JwtAuthGuard is implemented for authentication
 import { Request } from 'express';
+//import { UserSchema } from 'src/users/users.schema';
+import { IRequest } from 'src/request.interface';
 
-interface CustomRequest extends Request {
-  user: {
-    userId: string;  // or use the correct type for your user ID
-    email: string;
-  };
-}
+
 @Controller('jobs') // Ensure this is defined
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
@@ -57,15 +54,17 @@ export class JobsController {
   async applyForJob(
     @Param('id') jobId: string,
     @Body() applicationData,
-    @Req() req:CustomRequest ,
+    @Req() req:IRequest ,
   ) {
 
     //const user = req.user; // The user is attached to the request by the JwtAuthGuard
 
  
 
-    const userId = req.user?.userId; // Extract userId from the JWT token (assumed to be set during authentication)
+    const userId = req.user.userId; // Extract userId from the JWT token (assumed to be set during authentication)
     const coverLetter = applicationData.coverLetter; // Extract cover letter from the request body
+    console.log(userId);
+    console.log(coverLetter)
 
     // Call the service to apply for the job
     return this.jobsService.applyForJob(userId, jobId, coverLetter);

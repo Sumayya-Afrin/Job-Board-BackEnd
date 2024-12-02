@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job, JobDocument } from './jobs.schema';
@@ -65,6 +65,13 @@ export class JobsService {
     
       // Apply for a job
       async applyForJob(userId: string, jobId: string, coverLetter: string): Promise<Application> {
+
+         // Optionally, you can check if the user has already applied for the job before creating a new application
+  const existingApplication = await this.applicationModel.findOne({ jobId, userId });
+  if (existingApplication) {
+    throw new ConflictException('You have already applied for this job');
+  }
+
         const application = new this.applicationModel({
 
         
@@ -74,6 +81,8 @@ export class JobsService {
           coverLetter,
           status: 'applied',
         });
+
+        console.log('applied');
     
         return application.save();
       }

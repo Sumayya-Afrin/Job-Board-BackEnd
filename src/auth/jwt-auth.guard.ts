@@ -18,6 +18,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = request.headers.authorization?.split(' ')[1]; // Bearer token
 
     if (!token) {
+      console.log('No token found');
       return false; // No token found, reject the request
     }
 
