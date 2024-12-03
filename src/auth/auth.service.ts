@@ -16,9 +16,17 @@ export class AuthService {
   async register(name: string, email: string, password: string, role: string) {
 
     const existingUser = await this.userModel.findOne({ email });
+    const existingName = await this.userModel.findOne({name});
+    
     if (existingUser) {
       throw new UnauthorizedException('Email already exists');
     }
+
+    if (existingName) {
+      throw new UnauthorizedException('Username already exists');
+    }
+
+   
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new this.userModel({

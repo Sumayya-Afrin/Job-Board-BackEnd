@@ -48,6 +48,12 @@ export class JobsService {
     return this.jobModel.findByIdAndDelete(id).exec();
   }
 
+
+  //all applications
+  async getApplicationsForJob(jobId: string): Promise<Application[]> {
+    return this.applicationModel.find({ jobId }).exec(); // Fetch all applications for the job
+  }
+
   // Apply for a job
     // Check if user has already applied for the job
     async findApplicationByJobAndUser(jobId: string, userId: string): Promise<Application | null> {

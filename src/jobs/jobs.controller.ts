@@ -62,6 +62,29 @@ export class JobsController {
     return this.jobsService.updateJob(id, jobData);
   }
 
+
+  //applications
+  @Get(':id/applications')
+  @UseGuards(JwtAuthGuard) 
+  async getJobApplications(@Param('id') id: string, @Req() req: IRequest) {
+    const user = req.user;  
+
+    
+    const job = await this.jobsService.findById(id);
+    if (!job) {
+      throw new ForbiddenException('Applications not found');
+    }
+
+    
+    if (job.postedBy !== user.email) {
+      throw new ForbiddenException('You can only view applications for jobs you posted');
+    }
+
+    
+    const applications = await this.jobsService.getApplicationsForJob(id);
+    return applications;
+  }
+
   // Route to delete a job
   @Delete(':id')
   @UseGuards(JwtAuthGuard) // Protect the route with authentication guard
