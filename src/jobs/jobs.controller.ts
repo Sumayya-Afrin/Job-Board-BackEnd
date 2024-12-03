@@ -10,6 +10,7 @@ import {
   Req,
   Get,
   ForbiddenException,
+  Query,
  
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
@@ -37,9 +38,13 @@ export class JobsController {
     return this.jobsService.createJob(jobData);
   }
 
-  @Get() // This handles GET requests to /jobs
-  async getAllJobs() {
-    return this.jobsService.getAllJobs(); // Calls the getAllJobs method in the JobsService
+  @Get()
+  async getAllJobs(
+    @Query('location') location: string,          // Optional query parameter for location
+    @Query('minSalary') minSalary: number,        // Optional query parameter for minSalary
+    @Query('maxSalary') maxSalary: number,        // Optional query parameter for maxSalary
+  ) {
+    return this.jobsService.getFilteredJobs(location, minSalary, maxSalary);
   }
 
   // Route to update an existing job

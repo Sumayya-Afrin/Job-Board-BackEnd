@@ -49,6 +49,33 @@ export class JobsService {
   }
 
 
+  async getFilteredJobs(
+    location: string,
+    minSalary: number,
+    maxSalary: number,
+  ) {
+    const filterCriteria: any = {}; // Create an object to hold filter conditions
+
+    // If location is provided, add it to the filter criteria
+    if (location) {
+      filterCriteria.location = location;
+    }
+
+    // If minSalary is provided, add it to the filter criteria
+    if (minSalary) {
+      filterCriteria.salary = { $gte: minSalary };  // Find jobs with salary >= minSalary
+    }
+
+    // If maxSalary is provided, add it to the filter criteria
+    if (maxSalary) {
+      filterCriteria.salary = { ...filterCriteria.salary, $lte: maxSalary }; // Find jobs with salary <= maxSalary
+    }
+
+    // Execute the query with the filter criteria
+    return this.jobModel.find(filterCriteria).exec();
+  }
+
+
   //all applications
   async getApplicationsForJob(jobId: string): Promise<Application[]> {
     return this.applicationModel.find({ jobId }).exec(); // Fetch all applications for the job
