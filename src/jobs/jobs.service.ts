@@ -24,10 +24,13 @@ export class JobsService {
 
   // Create a new job posting
   async createJob(jobData: any) {
+    console.log('posting jobs');
     const job = new this.jobModel(jobData);
     await job.save();
     return job;
   }
+
+  
 
   // Update an existing job posting
   async updateJob(id: string, jobData: any) {

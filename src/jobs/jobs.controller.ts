@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Get,
+  ForbiddenException,
  
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
@@ -25,7 +26,14 @@ export class JobsController {
   // Route to create a new job
   @Post()
   @UseGuards(JwtAuthGuard) // Protect the route with authentication guard
-  async createJob(@Body() jobData) {
+  async createJob(@Body() jobData, @Req() req: IRequest) {
+    const user = req.user;
+    console.log(user);
+
+    // Check if the user has the 'recruiter' role
+    if (user.role !== 'recruiter') {
+      throw new ForbiddenException('Only recruiters can post jobs.');
+    }
     return this.jobsService.createJob(jobData);
   }
 
@@ -63,8 +71,12 @@ export class JobsController {
 
     const userId = req.user.userId; // Extract userId from the JWT token (assumed to be set during authentication)
     const coverLetter = applicationData.coverLetter; // Extract cover letter from the request body
-    console.log(userId);
-    console.log(coverLetter)
+  
+
+
+    if (req.user.role !== 'seeker') {
+      throw new ForbiddenException('Only seekers can apply for jobs.');
+    }
 
     // Call the service to apply for the job
     return this.jobsService.applyForJob(userId, jobId, coverLetter);

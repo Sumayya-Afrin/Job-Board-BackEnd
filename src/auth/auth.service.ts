@@ -57,7 +57,7 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload, {
         secret: 'job-board-12345', // Use your actual secret here
-        expiresIn: '60m', // Optional: Token expiration time
+       // expiresIn: '60m', // Optional: Token expiration time
       }),
     };
   }
