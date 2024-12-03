@@ -10,6 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthController } from './auth.controller'; 
+import { JobsModule } from 'src/jobs/jobs.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { AuthController } from './auth.controller';
       secret: process.env.JWT_SECRET ,  // Replace with your actual secret
       signOptions: { expiresIn: '60s' },  // Token expiry time
     }),
-    forwardRef(() => UsersModule), // If you need the users module for finding users, etc.
+    forwardRef(() => UsersModule),
+    forwardRef(() => JobsModule), // If you need the users module for finding users, etc.
   ],
   controllers: [AuthController], 
   providers: [AuthService, JwtStrategy , JwtService, JwtAuthGuard],

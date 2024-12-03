@@ -22,6 +22,12 @@ export class JobsService {
     return this.jobModel.find().exec();
   }
 
+
+    // Find job by ID
+    async findById(id: string): Promise<Job | null> {
+      return this.jobModel.findById(id).exec(); // Returns the job document with postedBy
+    }
+
   // Create a new job posting
   async createJob(jobData: any) {
     console.log('posting jobs');
@@ -33,33 +39,15 @@ export class JobsService {
   
 
   // Update an existing job posting
-  async updateJob(id: string, jobData: any) {
-    const job = await this.jobModel.findById(id);
-    if (!job) {
-      throw new NotFoundException('Job not found');
-    }
-    job.title = jobData.title || job.title;
-    job.description = jobData.description || job.description;
-    job.location = jobData.location || job.location;
-    job.salary = jobData.salary || job.salary;
-    job.updatedAt = new Date();
-    await job.save();
-    return job;
+  async updateJob(id: string, jobData: any): Promise<Job> {
+    return this.jobModel.findByIdAndUpdate(id, jobData, { new: true }).exec();
   }
 
   // Delete a job posting
   async deleteJob(id: string): Promise<any> {
-    const job = await this.jobModel.findById(id);
-    
-    if (!job) {
-      throw new NotFoundException('Job not found');
-    }
-
-    // Use deleteOne or delete() instead of remove
-    await job.deleteOne();  // or job.delete() as alternative
-    
-    return { message: 'Job deleted successfully' };
+    return this.jobModel.findByIdAndDelete(id).exec();
   }
+
   // Apply for a job
     // Check if user has already applied for the job
     async findApplicationByJobAndUser(jobId: string, userId: string): Promise<Application | null> {

@@ -45,17 +45,43 @@ export class JobsController {
   // Route to update an existing job
   @Put(':id')
   @UseGuards(JwtAuthGuard) // Protect the route with authentication guard
-  async updateJob(@Param('id') id: string, @Body() jobData) {
+  async updateJob(@Param('id') id: string, @Body() jobData, @Req() req: IRequest) {
+    const user = req.user;
+
+    // Fetch the job to ensure the user is the recruiter who posted it
+    const job = await this.jobsService.findById(id);
+    if (!job) {
+      throw new ForbiddenException('Job not found');
+    }
+
+    // Check if the current user is the recruiter who posted the job
+    if (job.postedBy !== user.email) {
+      throw new ForbiddenException('You can only update or delete jobs you created');
+    }
+
     return this.jobsService.updateJob(id, jobData);
   }
 
   // Route to delete a job
   @Delete(':id')
   @UseGuards(JwtAuthGuard) // Protect the route with authentication guard
-  async deleteJob(@Param('id') id: string) {
+  async deleteJob(@Param('id') id: string, @Req() req: IRequest) {
+    const user = req.user;
+
+    // Fetch the job to ensure the user is the recruiter who posted it
+    const job = await this.jobsService.findById(id);
+    if (!job) {
+      throw new ForbiddenException('Job not found');
+    }
+
+    // Check if the current user is the recruiter who posted the job
+    if (job.postedBy !== user.email) {
+      throw new ForbiddenException('You can only update or delete jobs you created');
+    }
+
     return this.jobsService.deleteJob(id);
   }
-
+  
   // Route for a job seeker to apply for a job
   @Post(':id/apply')
   @UseGuards(JwtAuthGuard) // Protect the route with authentication guard
