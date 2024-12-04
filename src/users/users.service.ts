@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './users.schema';
+import { IsOptional, IsInt, Min, Max } from 'class-validator';
 
 @Injectable()
 export class UsersService {
@@ -38,5 +39,10 @@ export class UsersService {
   async getUserProfile(id: string): Promise<UserDocument> {
     const user = await this.findUserById(id);
     return user; // Returning user data without password
+  }
+
+   // New method to get all users
+   async getAllUsers() {
+    return this.userModel.find().exec(); // This fetches all users from the database
   }
 }
