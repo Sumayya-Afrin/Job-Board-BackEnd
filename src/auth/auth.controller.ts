@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/create-user.dto';
 import { ValidationPipe } from '@nestjs/common';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,13 @@ export class AuthController {
      const { name, email, password, role } = registerUserDto;
      return this.authService.register(name, email, password, role);
    }
+
+
+   @Post('verify-registration')
+async verifyRegistration(@Body(new ValidationPipe()) verifyOtpDto: VerifyOtpDto) {
+  const { email, otp, name, password, role } = verifyOtpDto;
+  return this.authService.verifyRegistration(email, otp, name, password, role);
+}
  
    // Login a user with validation
    @Post('login')
@@ -22,5 +30,13 @@ export class AuthController {
      const { email, password } = loginUserDto;
      return this.authService.login(email, password);
    }
+
+   @Post('verify-login')
+async verifyLogin(@Body(new ValidationPipe()) verifyOtpDto: VerifyOtpDto) {
+  const { email, otp } = verifyOtpDto;
+  return this.authService.verifyLogin(email, otp);
+}
+
+   
  
 }
